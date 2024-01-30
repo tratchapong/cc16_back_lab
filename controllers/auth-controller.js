@@ -1,5 +1,6 @@
 const bcrypt = require('bcryptjs')
 const db = require('../models/db')
+const jwt = require('jsonwebtoken')
 
 // const tryCacth = func => (req, res, next) => func(req,res,next).catch(err => next(err))
 const tryCatch = func => (req, res, next) => func(req,res,next).catch(next)
@@ -20,6 +21,30 @@ exports.register = tryCatch( async (req,res,next) => {
         res.json({msg: 'Register Successful'})
 })
 
+exports.login = tryCatch( async (req, res, next) => {
+    const { s_code, t_code, password} = req.body
+    console.log(s_code)
+    console.log(req.body)
+    if( s_code && t_code) {
+        throw new Error('Teacher or Student::400')
+    } 
+
+    const result = t_code 
+        ? await db.teacher.findFirstOrThrow( { where : { t_code : t_code}})
+        : await db.student.findFirstOrThrow( { where : { s_code : s_code}})
+
+    let pwOk = await bcrypt.compare(password, result.password)
+    if(!pwOk) {
+        throw new Error("Invalid Login::400")
+    }
+    const payload = t_code
+        ? { id: result.id, t_code: result.t_code }
+        : { id: result.id, s_code: result.s_code }
+
+    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn : '30d'})
+    
+    res.json({token : token})
+} )
 
 
 
