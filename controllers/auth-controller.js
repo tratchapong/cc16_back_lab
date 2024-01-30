@@ -1,11 +1,10 @@
 const bcrypt = require('bcryptjs')
 const db = require('../models/db')
 const jwt = require('jsonwebtoken')
-
-// const tryCacth = func => (req, res, next) => func(req,res,next).catch(err => next(err))
-const tryCatch = func => (req, res, next) => func(req,res,next).catch(next)
+const tryCatch = require('../utils/tryCatch')
 
 exports.register = tryCatch( async (req,res,next) => {
+
     const { s_code, password, confirmPassword, firstname, email } = req.body
         if( !(s_code && password && confirmPassword && firstname)) {
             return next(new Error("fulfill the blank input::400"))
@@ -23,11 +22,17 @@ exports.register = tryCatch( async (req,res,next) => {
 
 exports.login = tryCatch( async (req, res, next) => {
     const { s_code, t_code, password} = req.body
-    console.log(s_code)
-    console.log(req.body)
+
     if( s_code && t_code) {
         throw new Error('Teacher or Student::400')
     } 
+
+    if ( s_code &&  !(/^[s]\d{3}$/.test(s_code)) ) {
+        throw new Error('Wrong code format')
+    }
+    if ( t_code &&  !(/^[t]\d{3}$/.test(t_code)) ) {
+        throw new Error('Wrong code format')
+    }
 
     const result = t_code 
         ? await db.teacher.findFirstOrThrow( { where : { t_code : t_code}})
@@ -46,5 +51,7 @@ exports.login = tryCatch( async (req, res, next) => {
     res.json({token : token})
 } )
 
-
+exports.getMe = (req, res, next) => {
+    res.json({user : req.user})
+}
 

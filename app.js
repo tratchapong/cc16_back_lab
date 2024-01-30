@@ -4,6 +4,7 @@ const cors = require('cors')
 const notFound = require('./middlewares/notFound')
 const errorMiddleware = require('./middlewares/error')
 const authRoute = require('./routes/auth-route')
+const authenticate = require('./middlewares/authenticate')
 
 const app = express()
 
@@ -12,6 +13,7 @@ app.use(express.json())
 
 // service api
 app.use('/auth', authRoute)
+
 
 
 app.use( notFound )
