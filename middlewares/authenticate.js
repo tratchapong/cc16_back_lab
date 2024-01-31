@@ -11,7 +11,7 @@ module.exports = tryCatch(async (req, res, next) => {
         throw new Error("UnAuthorized")
     }
     const token = authorization.split(' ')[1]
-    console.log(token)
+    // console.log(token)
 
     if(!token) {
         throw new Error("UnAuthorized")
@@ -21,7 +21,7 @@ module.exports = tryCatch(async (req, res, next) => {
     const result = t_code
         ? await db.teacher.findFirstOrThrow( {where: {t_code : t_code}})
         : await db.student.findFirstOrThrow( {where: {s_code : s_code}})
-    console.log(result)
+    // console.log(result)
     delete result.password
     result.role = t_code ? 'teacher' : 'student'
     req.user = result
