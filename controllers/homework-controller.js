@@ -50,3 +50,13 @@ exports.update= tryCatch( async( req, res, next) => {
   })
   res.json({result : rs})
 } )
+
+exports.delete = tryCatch( async (req,res,next) => {
+  const {id} = req.params
+
+  await db.homework.delete({
+    where : { id : +id}
+  })
+
+  res.json({msg: 'Delete OK'})
+})
