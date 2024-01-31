@@ -6,7 +6,10 @@ PORT=
 
 service api
 
-path                method      params      body
-/auth/register      POST        none        { s_code, password, confirmPassword, firstname, email } 
-/auth/login         POST        none        { t_code or s_code, password }
-/auth/me                 GET         none        none
+path                method    authen      params      body
+/auth/register      POST        0         none        { s_code, password, confirmPassword, firstname, email } 
+/auth/login         POST        0         none        { t_code or s_code, password }
+/auth/me            GET         t,s       none        none
+/homework           POST        t         none        {question,startdate,duedate,published,subject_id,teacher_id }
+/subject            GET         0         none        none
+
