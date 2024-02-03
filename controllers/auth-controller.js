@@ -23,9 +23,9 @@ exports.register = tryCatch( async (req,res,next) => {
 exports.login = tryCatch( async (req, res, next) => {
     const { s_code, t_code, password} = req.body
 
-    if( s_code && t_code) {
-        throw new Error('Teacher or Student::400')
-    } 
+    if( (t_code && s_code) || (!t_code && !s_code)) {
+        throw new Error('use teacher or student code')
+    }
 
     if ( s_code &&  !(/^[s]\d{3}$/.test(s_code)) ) {
         throw new Error('Wrong code format')
